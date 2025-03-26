@@ -1,0 +1,34 @@
+name: Daily Penguin Prediction
+
+on:
+  schedule:
+    - cron: "30 7 * * *"  # Jeden Tag um 7:30 UTC
+  workflow_dispatch:  # Ermöglicht manuelles Starten
+
+jobs:
+  predict:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run prediction script
+        run: python predict_penguin.py
+
+      - name: Commit and push prediction results
+        run: |
+          git config --global user.name "captainlkebab"
+          git config --global user.email "samilmail00@gmail.com"
+          git add prediction_results.csv
+          git commit -m "Daily prediction update"
+          git push
